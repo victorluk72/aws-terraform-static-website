@@ -1,6 +1,16 @@
-# in terraform block no variables can be used
+# IMPORTANT: in terraform block no variables can be used
 terraform {
   required_version = ">= 0.12.0"
+
+  backend "s3" {
+    bucket                  = "terraform-state-bucket-static-web-dev" //change for different environment
+    key                     = "static-website/state.tfstate"
+    region                  = "us-east-1"
+    shared_credentials_file = "~/.aws/credentials"
+    profile                 = "victorluk"
+    dynamodb_table          = "terraform_state_lock_dev" //change for different environment
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"

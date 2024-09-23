@@ -11,7 +11,7 @@ resource "aws_iam_user_policy_attachment" "admin_policy_attachment" {
 
 # S3 Bucket for Terraform state
 resource "aws_s3_bucket" "terraform_state_bucket" {
-  bucket = var.backend_bucket_name
+  bucket = "${var.backend_bucket_name}-${var.env}"
 
   lifecycle {
     prevent_destroy = true
@@ -19,7 +19,7 @@ resource "aws_s3_bucket" "terraform_state_bucket" {
 
   tags = {
     Name        = var.backend_bucket_name
-    Environment = "Dev - To Be Changed to variable" //TBD
+    Environment = "${var.env}"
   }
 }
 
@@ -61,7 +61,7 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
 
 # DynamoDB Table for state locking
 resource "aws_dynamodb_table" "state_lock_table" {
-  name         = var.state_locking_table
+  name         = "${var.state_locking_table}_${var.env}"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"
 
@@ -75,7 +75,7 @@ resource "aws_dynamodb_table" "state_lock_table" {
   }
 
   tags = {
-    Name        = var.state_locking_table
-    Environment = "Dev - To Be Changed to variable" //TBD
+    Name        = "${var.state_locking_table}_${var.env}"
+    Environment = "${var.env}"
   }
 }

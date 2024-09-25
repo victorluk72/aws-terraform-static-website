@@ -6,7 +6,7 @@ terraform {
     bucket                  = "terraform-state-bucket-static-web-dev" //change for different environment
     key                     = "static-website/state.tfstate"
     region                  = "us-east-1"
-    shared_credentials_file = "~/.aws/credentials"
+    shared_credentials_files = "~/.aws/credentials"
     profile                 = "victorluk"
     dynamodb_table          = "terraform_state_lock_dev" //change for different environment
   }

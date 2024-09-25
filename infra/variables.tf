@@ -10,10 +10,10 @@ variable "region" {
   description = "The region in which create/manage resources"
 }
 
-variable "aws_profile" {
-  type        = string
-  description = "AWS account profile details"
-}
+# variable "aws_profile" {
+#   type        = string
+#   description = "AWS account profile details"
+# }
 # -------------------------------------------------------------------
 
 # variables used in "remote_backend" module---------------------------

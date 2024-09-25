@@ -1,0 +1,49 @@
+name: Deploy Static Website
+
+# trigger for the Git Action to start
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    name: Deploy Infrastructure for Static website
+    runs-on: ubuntu-latest
+    
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      TF_VAR_region: ${{ secrets.TF_VAR_region }}
+      TF_VAR_iam_user_name: ${{ secrets.TF_VAR_iam_user_name }}
+      TF_VAR_backend_bucket_name: ${{ secrets.TF_VAR_backend_bucket_name }}
+      TF_VAR_state_locking_table:  ${{ secrets.TF_VAR_state_locking_table }}
+
+    # default working directory
+    defaults:
+      run:
+        working-directory: ./infra
+
+    # steps of the automation jobs
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Terraform Setup
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Format
+        run: terraform fmt -recursive
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+

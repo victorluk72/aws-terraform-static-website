@@ -27,5 +27,5 @@ terraform {
 # Configure AWS Provider
 provider "aws" {
   region  = var.region
-  profile = var.aws_profile //pick waht AWS account you want to connect
+  #profile = var.aws_profile
 }

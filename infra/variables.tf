@@ -49,7 +49,6 @@ variable "website_bucket" {
   type        = string
   description = "Name of the S3 bucket to store sttic website"
 }
-#variable "force_destroy" {}
 variable "versioning_enabled" {}
 variable "index_document" {}
 # -------------------------------------------------------------------

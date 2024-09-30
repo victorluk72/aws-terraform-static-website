@@ -1,49 +1,66 @@
-# name: Deploy Static Website
+name: Deploy Static Website
 
-# # trigger for the Git Action to start
-# on:
-#   push:
-#     branches:
-#       - main
+# trigger for the Git Action to start
+on:
+  push:
+    branches:
+      - main
 
-# jobs:
-#   terraform:
-#     name: Deploy Infrastructure for Static website
-#     runs-on: ubuntu-latest
+jobs:
+  # terraform:
+  #   name: Deploy Infrastructure for Static website
+  #   runs-on: ubuntu-latest
     
-#     env:
-#       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#       TF_VAR_region: ${{ secrets.TF_VAR_region }}
-#       TF_VAR_iam_user_name: ${{ secrets.TF_VAR_iam_user_name }}
-#       TF_VAR_backend_bucket_name: ${{ secrets.TF_VAR_backend_bucket_name }}
-#       TF_VAR_state_locking_table:  ${{ secrets.TF_VAR_state_locking_table }}
+  #   env:
+  #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #     TF_VAR_region: ${{ secrets.TF_VAR_region }}
+  #     TF_VAR_iam_user_name: ${{ secrets.TF_VAR_iam_user_name }}
+  #     TF_VAR_backend_bucket_name: ${{ secrets.TF_VAR_backend_bucket_name }}
+  #     TF_VAR_state_locking_table:  ${{ secrets.TF_VAR_state_locking_table }}
 
-#     # default working directory
-#     defaults:
-#       run:
-#         working-directory: ./infra
+  #   # default working directory
+  #   defaults:
+  #     run:
+  #       working-directory: ./infra
 
-#     # steps of the automation jobs
-#     steps:
-#       - name: Checkout Repo
-#         uses: actions/checkout@v2
+  #   # steps of the automation jobs
+  #   steps:
+  #     - name: Checkout Repo
+  #       uses: actions/checkout@v2
 
-#       - name: Terraform Setup
-#         uses: hashicorp/setup-terraform@v1
+  #     - name: Terraform Setup
+  #       uses: hashicorp/setup-terraform@v1
 
-#       - name: Terraform Format
-#         run: terraform fmt -recursive
+  #     - name: Terraform Format
+  #       run: terraform fmt -recursive
 
-#       - name: Terraform Init
-#         run: terraform init
+  #     - name: Terraform Init
+  #       run: terraform init
 
-#       - name: Terraform Validate
-#         run: terraform validate
+  #     - name: Terraform Validate
+  #       run: terraform validate
 
-#       - name: Terraform Plan
-#         run: terraform plan -lock=false
+  #     - name: Terraform Plan
+  #       run: terraform plan -lock=false
 
-#       - name: Terraform Apply
-#         run: terraform apply -auto-approve
+  #     - name: Terraform Apply
+  #       run: terraform apply -auto-approve
 
+  Sync_S3:
+    name: Sync files to S3 Bucket
+    #needs: Terraform
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@master
+      - uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --delete --exclude '.DS_Store'
+
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_BUCKET: "bucket-static-website-dev"
+          AWS_REGION: "us-east-1"
+          SOURCE_DIR: "./website"
